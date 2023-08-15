@@ -44,6 +44,13 @@ app.get('/users/logout', (req, res) => {
   res.send('logout')
 })
 
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id
+  return Todo.findByPk(id)
+    .then(todo => res.render('detail', { todo: todo.toJSON() }))
+    .catch(error => console.log(error))
+})
+
 const PORT = 3000
 app.listen(PORT, () => {
   console.log(`App is running on http://localhost:${PORT}`)
