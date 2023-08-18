@@ -16,11 +16,33 @@ router.post('/', (req, res) => {
     .then(() => res.redirect('/'))
     .catch(error => console.error(error))
 })
-
+// Read
 router.get('/:id', (req, res) => {
   const id = req.params.id
   return Todo.findByPk(id)
     .then(todo => res.render('detail', { todo: todo.toJSON() }))
+    .catch(error => console.log(error))
+})
+// Update
+router.get('/:id/edit', (req, res) => {
+  const UserId = req.user.id
+  const id = req.params.id
+  Todo.findOne({ where: { id, UserId } })
+    .then(todo => res.render('edit', { todo: todo.toJSON() }))
+    .catch(error => console.log(error))
+})
+
+router.put('/:id', (req, res) => {
+  const UserId = req.user.id
+  const id = req.params.id
+  const { name, isDone } = req.body
+  Todo.findOne({ where: { id, UserId } })
+    .then(todo => {
+      todo.name = name
+      todo.isDone = isDone === 'on' //true
+      return todo.save()
+    })
+    .then(() => res.redirect(`/todos/${id}`))
     .catch(error => console.log(error))
 })
 
